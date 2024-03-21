@@ -25,31 +25,26 @@ const startApp = () => {
   const ambientLight = new THREE.AmbientLight('#ffffff', 0.2)
   scene.add(dirLight, ambientLight)
 
-
-
-
-
-
-
-
-
-
-
   // meshes
-  const geometry = new THREE.IcosahedronGeometry(1, 5)
-  const material = new THREE.MeshStandardMaterial()
+  const geometry = new THREE.SphereGeometry(1)
+  const material = new THREE.ShaderMaterial({
+    fragmentShader: fragmentShader,
+    vertexShader: vertexShader,
+  })
+
+  material.uniforms.uTime = { value: 0 }
 
   const ico = new THREE.Mesh(geometry, material)
   scene.add(ico)
 
-
-
-
-
-
-
-
-
+  // Adding Wireframe geometry for reference
+  const wGeometry = new THREE.SphereGeometry(1)
+  const wMaterial = new THREE.MeshBasicMaterial({
+    wireframe: true,
+    color: 'red',
+  })
+  const wIco = new THREE.Mesh(wGeometry, wMaterial)
+  scene.add(wIco)
 
   // GUI
   const cameraFolder = gui.addFolder('Camera')
@@ -81,6 +76,8 @@ const startApp = () => {
   addPass(outputPass)
 
   useTick(({ timestamp, timeDiff }) => {
+    const time = timestamp / 10000
+    material.uniforms.uTime.value = time
   })
 }
 
